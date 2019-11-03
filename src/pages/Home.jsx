@@ -103,6 +103,11 @@ class HomeView extends Component {
     this.toggleModal = this.toggleModal.bind(this)
     this.toggleOffer = this.toggleOffer.bind(this)
     this.updateMarketInterest = this.updateMarketInterest.bind(this)
+    this.Quartile = this.Quartile.bind(this)
+    this.Quartile_25 = this.Quartile_25.bind(this)
+    this.Quartile_50 = this.Quartile_50.bind(this)
+    this.Array_Sort_Numbers = this.Array_Sort_Numbers.bind(this)
+    this.Array_Sum = this.Array_Sum.bind(this)
   }
 
   toggleModal(id) {
@@ -122,6 +127,62 @@ class HomeView extends Component {
 
   updateMarketInterest(evt) {
     this.setState({"mvInput":evt.target.value})
+  }
+
+  Median(data) {
+    return this.Quartile_50(data);
+  }
+
+  Quartile_25(data) {
+    return this.Quartile(data, 0.25);
+  }
+
+  Quartile_50(data) {
+    return this.Quartile(data, 0.5);
+  }
+
+  Quartile_75(data) {
+    return this.Quartile(data, 0.75);
+  }
+
+  Quartile(data, q) {
+    data=this.Array_Sort_Numbers(data);
+    var pos = ((data.length) - 1) * q;
+    var base = Math.floor(pos);
+    var rest = pos - base;
+    if( (data[base+1]!==undefined) ) {
+      return data[base] + rest * (data[base+1] - data[base]);
+    } else {
+      return data[base];
+    }
+  }
+
+  Array_Sort_Numbers(inputarray){
+      return inputarray.sort(function(a, b) {
+        return a - b;
+      });
+  }
+
+  Array_Sum(t){
+   return t.reduce(function(a, b) { return a + b; }, 0);
+  }
+
+  Array_Average(data) {
+    return this.Array_Sum(data) / data.length;
+  }
+
+  Array_Stdev(tab){
+   var i,j,total = 0, mean = 0, diffSqredArr = [];
+   for(i=0;i<tab.length;i+=1){
+       total+=tab[i];
+   }
+   mean = total/tab.length;
+   for(j=0;j<tab.length;j+=1){
+       diffSqredArr.push(Math.pow((tab[j]-mean),2));
+   }
+   return (Math.sqrt(diffSqredArr.reduce(function(firstEl, nextEl){
+            return firstEl + nextEl;
+          })/tab.length));
   }
 
   render() {
@@ -249,6 +310,7 @@ class HomeView extends Component {
                     <MDBTableHead>
                       <tr>
                         <th>Quartiles</th>
+                        <th>Min</th>
                         <th>1st</th>
                         <th>Med</th>
                         <th>3rd</th>
@@ -262,6 +324,7 @@ class HomeView extends Component {
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
+                        <td>-</td>
                       </tr>
                       <tr>
                         <td>Term</td>
@@ -269,9 +332,11 @@ class HomeView extends Component {
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
+                        <td>-</td>
                       </tr>
                       <tr>
                         <td>Balance</td>
+                        <td>-</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>

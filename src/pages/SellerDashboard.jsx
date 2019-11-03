@@ -6,6 +6,8 @@ import { Line } from "react-chartjs-2";
 import Footer from '../containers/Footer'
 import FooterEnd from '../containers/FooterEnd'
 import Navigation from '../components/navigation/Navigation'
+import {getTapeRequest} from '../actions/tape';
+import {getTape} from '../reducers'
 
 import web3 from '../utilities/Web3';
 import storehash from '../utilities/Storehash';
@@ -33,6 +35,15 @@ class SellerDashboardView extends Component {
       txReceipt: ''
     };
 
+    constructor(props) {
+      super(props)
+    }
+
+
+    componentDidMount() {
+
+    }
+
     //Take file input from user
     captureFile = (event) => {
       event.stopPropagation()
@@ -52,58 +63,140 @@ class SellerDashboardView extends Component {
     };
 
     //ES6 async function
-    onClick = async () => {
-      try {
-        this.setState({ blockNumber: "waiting.." });
-        this.setState({ gasUsed: "waiting..." });
-        await web3.eth.getTransactionReceipt(this.state.transactionHash, (err, txReceipt) => {
-          console.log(err, txReceipt);
-          this.setState({ txReceipt });
-        });
-      }
-      catch (error) {
-        console.log(error);
-      }
+    //parsing
+    // onClick = async () => {
+    //   try {
+    //     this.setState({ blockNumber: "waiting.." });
+    //     this.setState({ gasUsed: "waiting..." });
+    //     await web3.eth.getTransactionReceipt(this.state.transactionHash, (err, txReceipt) => {
+    //       console.log(err, txReceipt);
+    //       this.setState({ txReceipt });
+    //     });
+    //   }
+    //   catch (error) {
+    //     console.log(error);
+    //   }
+    // }
+    // onSubmit = async (event) => {
+    //   event.preventDefault();
+    //
+    //   //bring in user's metamask account address
+    //   const accounts = await web3.eth.getAccounts();
+    //   //obtain contract address from storehash.js
+    //   const ethAddress = await storehash.options.address;
+    //   this.setState({ ethAddress });
+    //   //save document to IPFS,return its hash#, and set hash# to state
+    //   await window.ethereum.enable();
+    //   console.log('web3.isConnected', web3.eth.isConnected, web3.eth.accounts);
+    //   await ipfs.add(this.state.buffer, (err, ipfsHash) => {
+    //     console.log('ipfsHash', err, ipfsHash, ipfsHash[0].hash);
+    //
+    //     //setState by setting ipfsHash to ipfsHash[0].hash
+    //     this.setState({ ipfsHash: ipfsHash[0].hash });
+    //     console.log(web3.utils.asciiToHex('asciiToHex', this.state.ipfsHash));
+    //     console.log(web3.utils.fromAscii('fromAscii', typeof(this.state.ipfsHash), this.state.ipfsHash));
+    //     const ipfs = web3.utils.fromAscii(this.state.ipfsHash);
+    //     const teststring = web3.utils.fromAscii('test');
+    //     // call Ethereum contract method "sendHash" and .send IPFS hash to etheruem contract
+    //     //return the transaction hash from the ethereum contract
+    //
+    //     console.log('account', accounts[0], 'ethAddress', ethAddress, ipfsHash);
+    //     storehash.methods.addLoanPool(
+    //       this.state.ipfsHash,
+    //       accounts[0]
+    //     ).send({ from: accounts[0] }, (error, transactionHash) => {
+    //        console.log('error', error, 'transactionHash', transactionHash);
+    //        this.setState({ transactionHash });
+    //        var idx = 0
+    //        var weightedCoupon = 0
+    //        var weightedTerm = 0
+    //        var sumOutstanding = 0
+    //        var Papa = require('papaparse')
+    //        Papa.parse("https://gateway.ipfs.io/ipfs/"+this.state.ipfsHash, {
+    //          download: true,
+    //          step: function(row) {
+    //            if (idx > 0) {
+    //              weightedTerm += row[3] * row[6]
+    //              weightedCoupon += row[3] * row[4]
+    //              sumOutstanding += row[3]
+    //            }
+    //            idx += 1
+    //          },
+    //          complete: function(results) {
+    //            // console.log(results);
+    //          }
+    //        });
+    //      });
+    //
+    //     })
+    //
+    //   storehash.methods.getLoanPools().send({ from: accounts[0] }, (error, loanPools) => {
+    //      console.log('error', error, 'loanPools', loanPools);
+    //      this.setState({ loanPools });
+    //   });
+    //
+    //
+    //
+    // };
+
+
+  //ES6 async function
+  onClick = async () => {
+    try {
+      this.setState({ blockNumber: "waiting.." });
+      this.setState({ gasUsed: "waiting..." });
+      await web3.eth.getTransactionReceipt(this.state.transactionHash, (err, txReceipt) => {
+        console.log(err, txReceipt);
+        this.setState({ txReceipt });
+      });
     }
-    onSubmit = async (event) => {
-      event.preventDefault();
+    catch (error) {
+      console.log(error);
+    }
+  }
+  onSubmit = async (event) => {
+    event.preventDefault();
 
-      //bring in user's metamask account address
-      const accounts = await web3.eth.getAccounts();
-      //obtain contract address from storehash.js
-      const ethAddress = await storehash.options.address;
-      this.setState({ ethAddress });
-      //save document to IPFS,return its hash#, and set hash# to state
-      await window.ethereum.enable();
-      console.log('web3.isConnected', web3.eth.isConnected, web3.eth.accounts);
-      await ipfs.add(this.state.buffer, (err, ipfsHash) => {
-        console.log('ipfsHash', err, ipfsHash, ipfsHash[0].hash);
-        //setState by setting ipfsHash to ipfsHash[0].hash
-        this.setState({ ipfsHash: ipfsHash[0].hash });
-        console.log(web3.utils.asciiToHex('asciiToHex', this.state.ipfsHash));
-        console.log(web3.utils.fromAscii('fromAscii', typeof(this.state.ipfsHash), this.state.ipfsHash));
-        const ipfs = web3.utils.fromAscii(this.state.ipfsHash);
-        const teststring = web3.utils.fromAscii('test');
-        // call Ethereum contract method "sendHash" and .send IPFS hash to etheruem contract
-        //return the transaction hash from the ethereum contract
+    //bring in user's metamask account address
+    const accounts = await web3.eth.getAccounts();
+    //obtain contract address from storehash.js
+    const ethAddress = await storehash.options.address;
+    this.setState({ ethAddress });
+    //save document to IPFS,return its hash#, and set hash# to state
+    await window.ethereum.enable();
+    console.log('web3.isConnected', web3.eth.isConnected, web3.eth.accounts);
+    await ipfs.add(this.state.buffer, (err, ipfsHash) => {
+      console.log('ipfsHash', err, ipfsHash, ipfsHash[0].hash);
+      //setState by setting ipfsHash to ipfsHash[0].hash
+      this.setState({ ipfsHash: ipfsHash[0].hash });
+      console.log(web3.utils.asciiToHex('asciiToHex', this.state.ipfsHash));
+      console.log(web3.utils.fromAscii('fromAscii', typeof(this.state.ipfsHash), this.state.ipfsHash));
+      const ipfs = web3.utils.fromAscii(this.state.ipfsHash);
+      const teststring = web3.utils.fromAscii('test');
+      // call Ethereum contract method "sendHash" and .send IPFS hash to etheruem contract
+      //return the transaction hash from the ethereum contract
 
-        console.log('account', accounts[0], 'ethAddress', ethAddress, ipfsHash);
-        storehash.methods.addLoanPool(
-          this.state.ipfsHash,
-          accounts[0]
-        ).send({ from: accounts[0] }, (error, transactionHash) => {
-           console.log('error', error, 'transactionHash', transactionHash);
-           this.setState({ transactionHash }); });
-      })
+      console.log('account', accounts[0], 'ethAddress', ethAddress, ipfsHash);
 
-      storehash.methods.getLoanPools().send({ from: accounts[0] }, (error, loanPools) => {
-         console.log('error', error, 'loanPools', loanPools);
-         this.setState({ loanPools });
-        });
+      const weightedCoupoon = 7;
+      const weightedTerm = 14;
 
+      storehash.methods.addLoanPool(
+        this.state.ipfsHash,
+        accounts[0],
+        weightedCoupoon,
+        weightedTerm
+      ).send({ from: accounts[0] }, (error, transactionHash) => {
+         console.log('error', error, 'transactionHash', transactionHash);
+         this.setState({ transactionHash });
+          storehash.methods.getLoanPools().call({ from: accounts[0] }, (error, loanPools) => {
+            console.log('error', error, loanPools, 'loanPools');
 
-
-    };
+            this.setState({ loanPools });
+          });
+        })
+    })
+  }
 
   render() {
     return (
@@ -115,7 +208,6 @@ class SellerDashboardView extends Component {
             <h1>Upload Your Loan Tape</h1>
           </header>
           <hr />
-          <grid>
             <h3> Choose file to send to IPFS. </h3>
             <form onSubmit={this.onSubmit}>
               <input type="file" onChange={this.captureFile} />
@@ -150,7 +242,7 @@ class SellerDashboardView extends Component {
                 </tr>
               </tbody>
             </table>
-          </grid>
+
           <br />
           <br />
         </div>
@@ -160,4 +252,12 @@ class SellerDashboardView extends Component {
   }
 }
 
-export default SellerDashboard;
+const mapStateToProps = (state) => ({
+
+})
+
+const mapDispatchToProps = (dispatch) => ({
+
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SellerDashboard)

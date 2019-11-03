@@ -6,7 +6,6 @@ import { Router } from 'react-router-dom'
 import { createBrowserHistory } from "history";
 import { Route, Switch } from 'react-router'
 import FacebookLogin from 'react-facebook-login';
-import PrivateRoute from './containers/PrivateRoute';
 import axios from 'axios';
 
 import './index.css';

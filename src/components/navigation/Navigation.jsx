@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import {authErrors, isTempAuthenticated, getUserName, getCartInfo, getBids} from '../../reducers'
-import { getCart, getBidCount } from '../../actions/profile'
 import { connect } from 'react-redux'
 import { compose } from 'recompose'
 import { withFirebase } from '../../components/Firebase';
@@ -111,20 +109,11 @@ const Navigation = (props) => {
 }
 
 const mapStateToProps = (state) => ({
-  errors: authErrors(state),
-  isAuthenticated: isTempAuthenticated(state),
-  username: getUserName(state),
-  cartInfo: getCartInfo(state),
-  bids: getBids(state)
+
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  getCart: () => {
-    return dispatch(getCart())
-  },
-  retrieveBids: () => {
-    return dispatch(getBidCount())
-  }
+
 })
 
 export default compose(
