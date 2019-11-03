@@ -129,6 +129,8 @@ class HomeView extends Component {
     let finalPrice = 0
     let poolViews = (
       pools.map((pool, idx)=> {
+        var fixVal = pool.amount
+        var fixString = parseFloat(fixVal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
         return (
           <MDBListGroupItem key={idx}>
             <MDBTable>
@@ -138,8 +140,8 @@ class HomeView extends Component {
                     <th>Date Loaded</th>
                     <th>Seller</th>
                     <th>Loan Type</th>
-                    <th>Total Balance</th>
-                    <th>WAC (%)</th>
+                    <th>Total Balance ($)</th>
+                    <th>WAC</th>
                     <th>WART (mos)</th>
                     <th class="text-right">Action</th>
                   </tr>
@@ -150,7 +152,7 @@ class HomeView extends Component {
                     <td>{pool.date}</td>
                     <td>{pool.seller}</td>
                     <td>{pool.type}</td>
-                    <td>{pool.amount}</td>
+                    <td>{fixString}</td>
                     <td>{pool.percent}</td>
                     <td>{pool.term}</td>
                     <td className="text-right">
@@ -166,6 +168,8 @@ class HomeView extends Component {
     )
     let info = (<div></div>)
     if (selectedOfferId > -1) {
+      var fixVal = pools[selectedOfferId].amount
+      var fixString = parseFloat(fixVal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
       info = (
         <div>
         <h6>From: Brandon Burton &lt;bburton.cg@gmail.com&gt;</h6>
@@ -179,7 +183,7 @@ class HomeView extends Component {
             <h6>{pools[selectedOfferId].date}</h6>
           </MDBCol>
           <MDBCol>
-            <h6>{pools[selectedOfferId].amount}</h6>
+            <h6>{fixString}</h6>
           </MDBCol>
         </MDBRow>
         <hr />
@@ -201,21 +205,10 @@ class HomeView extends Component {
       var ip = percent / 12;
       var marketInterestRate = input / 12;
 
-      console.log(ip)
-
       var pvi = (amount * ip) * ((1 - (Math.pow(1 + marketInterestRate,(-1 * wart))))/marketInterestRate)
       var pvp = (amount * (Math.pow(1 + marketInterestRate,(-1 * wart))))
       var marketValue = ((pvi + pvp) / amount * 100).toFixed(2)
       var finalPriceText = marketValue
-
-      if (isNaN(finalPriceText)) {
-        finalPrice = 'Enter a value.';
-      } else {
-        finalPrice = 'Calculating...';
-        setTimeout(()=> {
-          finalPriceText = marketValue
-        }, 2000);
-      }
 
       // id: 1,
       // seller: "Anon",
@@ -245,7 +238,7 @@ class HomeView extends Component {
             <MDBRow>
               <MDBCol>
                 <h6>Market Value Interest (%)  <MDBInput type="number" onChange={this.updateMarketInterest} value={this.state.input}/></h6>
-                <h6>Price: {finalPrice}</h6>
+                <h6>Price: {finalPriceText}</h6>
               </MDBCol>
             </MDBRow>
             <MDBRow>
