@@ -62,84 +62,6 @@ class SellerDashboardView extends Component {
       this.setState({ buffer });
     };
 
-    //ES6 async function
-    //parsing
-    // onClick = async () => {
-    //   try {
-    //     this.setState({ blockNumber: "waiting.." });
-    //     this.setState({ gasUsed: "waiting..." });
-    //     await web3.eth.getTransactionReceipt(this.state.transactionHash, (err, txReceipt) => {
-    //       console.log(err, txReceipt);
-    //       this.setState({ txReceipt });
-    //     });
-    //   }
-    //   catch (error) {
-    //     console.log(error);
-    //   }
-    // }
-    // onSubmit = async (event) => {
-    //   event.preventDefault();
-    //
-    //   //bring in user's metamask account address
-    //   const accounts = await web3.eth.getAccounts();
-    //   //obtain contract address from storehash.js
-    //   const ethAddress = await storehash.options.address;
-    //   this.setState({ ethAddress });
-    //   //save document to IPFS,return its hash#, and set hash# to state
-    //   await window.ethereum.enable();
-    //   console.log('web3.isConnected', web3.eth.isConnected, web3.eth.accounts);
-    //   await ipfs.add(this.state.buffer, (err, ipfsHash) => {
-    //     console.log('ipfsHash', err, ipfsHash, ipfsHash[0].hash);
-    //
-    //     //setState by setting ipfsHash to ipfsHash[0].hash
-    //     this.setState({ ipfsHash: ipfsHash[0].hash });
-    //     console.log(web3.utils.asciiToHex('asciiToHex', this.state.ipfsHash));
-    //     console.log(web3.utils.fromAscii('fromAscii', typeof(this.state.ipfsHash), this.state.ipfsHash));
-    //     const ipfs = web3.utils.fromAscii(this.state.ipfsHash);
-    //     const teststring = web3.utils.fromAscii('test');
-    //     // call Ethereum contract method "sendHash" and .send IPFS hash to etheruem contract
-    //     //return the transaction hash from the ethereum contract
-    //
-    //     console.log('account', accounts[0], 'ethAddress', ethAddress, ipfsHash);
-    //     storehash.methods.addLoanPool(
-    //       this.state.ipfsHash,
-    //       accounts[0]
-    //     ).send({ from: accounts[0] }, (error, transactionHash) => {
-    //        console.log('error', error, 'transactionHash', transactionHash);
-    //        this.setState({ transactionHash });
-    //        var idx = 0
-    //        var weightedCoupon = 0
-    //        var weightedTerm = 0
-    //        var sumOutstanding = 0
-    //        var Papa = require('papaparse')
-    //        Papa.parse("https://gateway.ipfs.io/ipfs/"+this.state.ipfsHash, {
-    //          download: true,
-    //          step: function(row) {
-    //            if (idx > 0) {
-    //              weightedTerm += row[3] * row[6]
-    //              weightedCoupon += row[3] * row[4]
-    //              sumOutstanding += row[3]
-    //            }
-    //            idx += 1
-    //          },
-    //          complete: function(results) {
-    //            // console.log(results);
-    //          }
-    //        });
-    //      });
-    //
-    //     })
-    //
-    //   storehash.methods.getLoanPools().send({ from: accounts[0] }, (error, loanPools) => {
-    //      console.log('error', error, 'loanPools', loanPools);
-    //      this.setState({ loanPools });
-    //   });
-    //
-    //
-    //
-    // };
-
-
   //ES6 async function
   onClick = async () => {
     try {
@@ -178,20 +100,51 @@ class SellerDashboardView extends Component {
 
       console.log('account', accounts[0], 'ethAddress', ethAddress, ipfsHash);
 
-      const weightedCoupoon = 7;
-      const weightedTerm = 14;
+      var weightedCoupon = 0;
+      var weightedTerm = 0;
+      var sumOutstanding = 0;
+      var wacValue = 0;
+      var wartValue = 0;
+      var idx = 0
 
+      var Papa = require('papaparse')
+      Papa.parse("https://gateway.ipfs.io/ipfs/"+this.state.ipfsHash, {
+         download: true,
+         step: function(row) {
+           var data = row.data
+
+           if (typeof data[3] == "string" && typeof data[4] == "string" && typeof data[6] == "string") {
+             if (idx > 0) {
+               weightedTerm += parseFloat(data[3]) * parseFloat(data[6])
+               weightedCoupon += parseFloat(data[3]) * parseFloat(data[4])
+               sumOutstanding += parseFloat(data[3])
+             }
+           }
+           idx += 1
+         },
+         complete: function(results) {
+          console.log(weightedTerm)
+          console.log(weightedCoupon)
+          console.log(sumOutstanding)
+           wacValue = weightedCoupon / sumOutstanding
+           wartValue = weightedTerm / sumOutstanding
+           console.log(wacValue)
+           console.log(wartValue)
+         }
+      });
+
+      //NOTE: HEYYYYY
       storehash.methods.addLoanPool(
         this.state.ipfsHash,
         accounts[0],
-        weightedCoupoon,
-        weightedTerm
+        wacValue,
+        wartValue,
+        sumOutstanding
       ).send({ from: accounts[0] }, (error, transactionHash) => {
          console.log('error', error, 'transactionHash', transactionHash);
          this.setState({ transactionHash });
           storehash.methods.getLoanPools().call({ from: accounts[0] }, (error, loanPools) => {
             console.log('error', error, loanPools, 'loanPools');
-
             this.setState({ loanPools });
           });
         })

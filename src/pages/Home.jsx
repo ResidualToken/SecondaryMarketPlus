@@ -25,9 +25,11 @@ class HomeView extends Component {
         seller: "Anon",
         date: '11/3/2019',
         type: 'Auto',
-        amount: '60000',
+        amount: '30000000',
         percent: '9%',
-        term: '48'
+        term: '48',
+        hash: 'QmeZDrcJBZhaQsYkofru6rgJ69snRi1g34RnJBTvpwFBnT',
+        attest: '7'
       },{
         id: 2,
         seller: "JP Morgan Chase",
@@ -35,7 +37,9 @@ class HomeView extends Component {
         type: 'Student Loans',
         amount: '350000000',
         percent: '5%',
-        term: '60'
+        term: '60',
+        hash: 'QmeZDrcJBZhaQsYkofru6rgJ69snRi1g34RnJBTvpwFBnT',
+        attest: '10'
       },{
         id: 3,
         seller: "Joes Stuff",
@@ -43,12 +47,15 @@ class HomeView extends Component {
         type: 'Various - Personal',
         amount: '60000',
         percent: '17%',
-        term: '200'
+        term: '200',
+        hash: 'QmeZDrcJBZhaQsYkofru6rgJ69snRi1g34RnJBTvpwFBnT',
+        attest: '0'
+
       }],
       modalOpen: false,
       selectedPoolId: -1,
       selectedOfferId: -1,
-      mvInput: 1,
+      mvInput: 0,
       dataLine: {
       labels: ["January", "February", "March", "April", "May", "June", "July"],
       datasets: [
@@ -187,7 +194,7 @@ class HomeView extends Component {
 
   render() {
     const { pools, selectedOfferId, selectedPoolId } = this.state
-    let finalPrice = 0
+    let finalPrice = NaN
     let poolViews = (
       pools.map((pool, idx)=> {
         var fixVal = pool.amount
@@ -204,6 +211,7 @@ class HomeView extends Component {
                     <th>Total Balance ($)</th>
                     <th>WAC</th>
                     <th>WART (mos)</th>
+                    <th>Attest (%)</th>
                     <th class="text-right">Action</th>
                   </tr>
                 </MDBTableHead>
@@ -216,6 +224,7 @@ class HomeView extends Component {
                     <td>{fixString}</td>
                     <td>{pool.percent}</td>
                     <td>{pool.term}</td>
+                    <td>{pool.attest}</td>
                     <td className="text-right">
                       <MDBBtn onClick={()=>{this.toggleModal(pool.id)}} style={{marginTop: -5}} className="btn btn-sm text-white" color="primary">Evaluate Now</MDBBtn>
                       <MDBBtn onClick={()=>{this.toggleOffer(pool.id)}} className="text-white btn-sm" style={{marginTop: -5}} color="info">Make Offer</MDBBtn>
@@ -271,6 +280,42 @@ class HomeView extends Component {
       var marketValue = ((pvi + pvp) / amount * 100).toFixed(2)
       var finalPriceText = marketValue
 
+      if (input < .01) {
+        finalPriceText = "-"
+      }
+
+      var weightedCoupon = 0;
+      var weightedTerm = 0;
+      var sumOutstanding = 0;
+      var wacValue = 0;
+      var wartValue = 0;
+      var idx = 0
+
+      var Papa = require('papaparse')
+
+      Papa.parse("https://gateway.ipfs.io/ipfs/"+this.state.pools[0].hash, {
+         download: true,
+         step: function(row) {
+           var data = row.data
+
+           if (typeof data[3] == "string" && typeof data[4] == "string" && typeof data[6] == "string") {
+             if (idx > 0) {
+               weightedTerm += parseFloat(data[3]) * parseFloat(data[6])
+               weightedCoupon += parseFloat(data[3]) * parseFloat(data[4])
+               sumOutstanding += parseFloat(data[3])
+             }
+           }
+           idx += 1
+         },
+         complete: function(results) {
+           wacValue = weightedCoupon / sumOutstanding
+           wartValue = weightedTerm / sumOutstanding
+           console.log(wacValue)
+           console.log(wartValue)
+           console.log(sumOutstanding)
+         }
+      });
+
       // id: 1,
       // seller: "Anon",
       // date: '11/3/2019',
@@ -293,7 +338,7 @@ class HomeView extends Component {
         <br />
         <br />
 
-        <MDBModal className="r-modal-results" isOpen={this.state.modalOpen} toggle={()=>{this.toggleModal(-1)}}>
+        <MDBModal size="lg" className="r-modal-results" isOpen={this.state.modalOpen} toggle={()=>{this.toggleModal(-1)}}>
           <MDBModalHeader toggle={()=>{this.toggleModal(-1)}}>Results</MDBModalHeader>
           <MDBModalBody>
             <MDBRow>
@@ -319,31 +364,46 @@ class HomeView extends Component {
                     </MDBTableHead>
                     <MDBTableBody>
                       <tr>
-                        <td>Coup</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
+                        <td>Coupon</td>
+                        <td>11.9</td>
+                        <td>17.9</td>
+                        <td>18</td>
+                        <td>18.9</td>
+                        <td>22</td>
                       </tr>
                       <tr>
                         <td>Term</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
+                        <td>10</td>
+                        <td>24</td>
+                        <td>31</td>
+                        <td>38</td>
+                        <td>46</td>
                       </tr>
                       <tr>
                         <td>Balance</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
+                        <td>10,000</td>
+                        <td>10,067</td>
+                        <td>10,135</td>
+                        <td>10,191</td>
+                        <td>10,270</td>
                       </tr>
                     </MDBTableBody>
                   </MDBTable>
+                  <br />
+                </MDBCol>
+                <MDBCol>
+                  <img src="https://i.ibb.co/jR2PPVq/Screen-Shot-2019-11-03-at-9-50-07-AM.png" alt="Screen-Shot-2019-11-03-at-9-50-07-AM" border="0" />
+                  <h5>Discussion</h5>
+                  <img src="https://dlp2gfjvaz867.cloudfront.net/product_photos/15015355/iron_20man-4_original.jpg" width="32" height="32" className="rounded float-left" alt="aligment" /><h6><span style={{marginLeft: 10, marginRight: 10}}></span>This loan pool is great!</h6>
+                  <hr />
+                  <br />
+                  <img src="https://pbs.twimg.com/media/DmsITFPWwAI1pRR.png" width="32" height="32" className="rounded float-left" alt="aligment" /><h6><span style={{marginLeft: 10, marginRight: 10}}></span>Spiderman approves!</h6>
+                  <hr />
+                  <br />
+                  <MDBInputGroup prepend="Comment" type="textarea" />
+                  <div class="text-right">
+                    <MDBBtn color="primary">Submit</MDBBtn>
+                  </div>
                 </MDBCol>
             </MDBRow>
           </MDBModalBody>
