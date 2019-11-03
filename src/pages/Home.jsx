@@ -7,6 +7,10 @@ import Footer from '../containers/Footer'
 import FooterEnd from '../containers/FooterEnd'
 import Navigation from '../components/navigation/Navigation'
 
+import web3 from '../utilities/Web3';
+import storehash from '../utilities/Storehash';
+import ipfs from '../utilities/Ipfs';
+
 export const Home = (props) => {
   //do something here
   return (
@@ -56,6 +60,8 @@ class HomeView extends Component {
       selectedPoolId: -1,
       selectedOfferId: -1,
       mvInput: 0,
+      mvInputTemp: 0,
+      processing: false,
       dataLine: {
       labels: ["January", "February", "March", "April", "May", "June", "July"],
       datasets: [
@@ -117,6 +123,25 @@ class HomeView extends Component {
     this.Array_Sum = this.Array_Sum.bind(this)
   }
 
+  componentDidMount()
+  {
+
+    web3.eth.getAccounts().then((res) => {
+       var accounts = res
+       storehash.methods.getLoanPools().call({ from: accounts[0] }, (error, loanPools) => {
+         console.log('error', error, loanPools, 'loanPools');
+         this.setState({ pools: loanPools });
+       });
+    }).catch((err) => {
+      console.log(err)
+    })
+    //obtain contract address from storehash.js
+    // const ethAddress = await ;
+    // this.setState({ ethAddress });
+
+
+  }
+
   toggleModal(id) {
     this.setState({"modalOpen":!this.state.modalOpen},()=> {
       if (id > -1) {
@@ -133,7 +158,10 @@ class HomeView extends Component {
   }
 
   updateMarketInterest(evt) {
-    this.setState({"mvInput":evt.target.value})
+    this.setState({"mvInputTemp": evt.target.value, "processing": true})
+    setTimeout(function () {
+      this.setState({mvInput: this.state.mvInputTemp, "processing": false});
+    }.bind(this), 1000 + Math.random()*2000)
   }
 
   Median(data) {
@@ -197,14 +225,22 @@ class HomeView extends Component {
     let finalPrice = NaN
     let poolViews = (
       pools.map((pool, idx)=> {
-        var fixVal = pool.amount
+        var fixVal = pool.totalAmount
         var fixString = parseFloat(fixVal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
+        var hash = pool.ipfsHash
+        var owner = pool.owner
+        if (typeof pool.ipfsHash == "string") {
+          hash = "..." + hash.substring(hash.length - 10, hash.length - 1)
+        }
+        if (typeof pool.owner == "string") {
+          owner = "..." + owner.substring(hash.length - 10, hash.length - 1)
+        }
         return (
           <MDBListGroupItem key={idx}>
             <MDBTable>
                 <MDBTableHead>
                   <tr>
-                    <th>Pool #</th>
+                    <th width="10%">Pool #</th>
                     <th>Date Loaded</th>
                     <th>Seller</th>
                     <th>Loan Type</th>
@@ -217,14 +253,14 @@ class HomeView extends Component {
                 </MDBTableHead>
                 <MDBTableBody>
                   <tr>
-                    <td>{pool.id}</td>
-                    <td>{pool.date}</td>
-                    <td>{pool.seller}</td>
-                    <td>{pool.type}</td>
+                    <td>{hash}</td>
+                    <td>{pool.postDate}</td>
+                    <td>{owner}</td>
+                    <td>Auto</td>
                     <td>{fixString}</td>
-                    <td>{pool.percent}</td>
-                    <td>{pool.term}</td>
-                    <td>{pool.attest}</td>
+                    <td>{pool.weightedCoupon}</td>
+                    <td>{pool.weightedTerm}</td>
+                    <td>{parseInt(Math.random() * 10)}</td>
                     <td className="text-right">
                       <MDBBtn onClick={()=>{this.toggleModal(pool.id)}} style={{marginTop: -5}} className="btn btn-sm text-white" color="primary">Evaluate Now</MDBBtn>
                       <MDBBtn onClick={()=>{this.toggleOffer(pool.id)}} className="text-white btn-sm" style={{marginTop: -5}} color="info">Make Offer</MDBBtn>
@@ -238,19 +274,19 @@ class HomeView extends Component {
     )
     let info = (<div></div>)
     if (selectedOfferId > -1) {
-      var fixVal = pools[selectedOfferId].amount
+      var fixVal = pools[selectedOfferId].totalAmount
       var fixString = parseFloat(fixVal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
       info = (
         <div>
         <h6>From: Brandon Burton &lt;bburton.cg@gmail.com&gt;</h6>
-        <h6>To Seller: (Anonymous) - {pools[selectedOfferId].date}_{pools[selectedOfferId].type}</h6>
+        <h6>To Seller: (Anonymous) - 11/3/2019_Auto</h6>
         <hr />
         <MDBRow>
           <MDBCol>
-            <h6>{pools[selectedOfferId].type}</h6>
+            <h6>Auto</h6>
           </MDBCol>
           <MDBCol>
-            <h6>{pools[selectedOfferId].date}</h6>
+            <h6>11/3/2019</h6>
           </MDBCol>
           <MDBCol>
             <h6>{fixString}</h6>
@@ -264,13 +300,17 @@ class HomeView extends Component {
     } else {
       <p>Loading...</p>
     }
-    if (selectedPoolId > -1) {
+    if (true) {
       //VALIDATE
       var input = this.state.mvInput / 100
 
-      var amount = parseFloat(pools[selectedPoolId].amount)
-      var percent = parseFloat(pools[selectedPoolId].percent) / 100.0
-      var wart = pools[selectedPoolId].term
+      var amount = parseFloat(pools[0].totalAmount)
+      var percent = parseFloat(pools[0].weightedCoupon) / 100.0
+      var wart = pools[0].weightedTerm
+
+      console.log(amount)
+      console.log(percent)
+      console.log(wart)
 
       var ip = percent / 12;
       var marketInterestRate = input / 12;
@@ -392,7 +432,8 @@ class HomeView extends Component {
                   <br />
                 </MDBCol>
                 <MDBCol>
-                  <img src="https://i.ibb.co/jR2PPVq/Screen-Shot-2019-11-03-at-9-50-07-AM.png" alt="Screen-Shot-2019-11-03-at-9-50-07-AM" border="0" />
+                  <h6>Rating: <img width="154" height="36" src="https://i.imgur.com/KGrevoJ.png" alt="Screen-Shot-2019-11-03-at-9-50-07-AM" border="0" /></h6>
+                  <br />
                   <h5>Discussion</h5>
                   <img src="https://dlp2gfjvaz867.cloudfront.net/product_photos/15015355/iron_20man-4_original.jpg" width="32" height="32" className="rounded float-left" alt="aligment" /><h6><span style={{marginLeft: 10, marginRight: 10}}></span>This loan pool is great!</h6>
                   <hr />
@@ -402,7 +443,7 @@ class HomeView extends Component {
                   <br />
                   <MDBInputGroup prepend="Comment" type="textarea" />
                   <div class="text-right">
-                    <MDBBtn color="primary">Submit</MDBBtn>
+                    <MDBBtn color="primary" className="text-whites">Submit</MDBBtn>
                   </div>
                 </MDBCol>
             </MDBRow>
