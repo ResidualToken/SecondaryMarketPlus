@@ -108,6 +108,7 @@ class SellerDashboardView extends Component {
       var idx = 0
 
       var Papa = require('papaparse')
+      var hash = this.state.ipfsHash
       Papa.parse("https://gateway.ipfs.io/ipfs/"+this.state.ipfsHash, {
          download: true,
          step: function(row) {
@@ -128,26 +129,30 @@ class SellerDashboardView extends Component {
           console.log(sumOutstanding)
            wacValue = weightedCoupon / sumOutstanding
            wartValue = weightedTerm / sumOutstanding
+           wacValue = parseInt(wacValue)
+           wartValue = parseInt(wartValue)
+           sumOutstanding = parseInt(sumOutstanding)
            console.log(wacValue)
            console.log(wartValue)
+           //NOTE: HEYYYYY
+           storehash.methods.addLoanPool(
+             hash,
+             accounts[0],
+             wacValue,
+             wartValue,
+             sumOutstanding
+           ).send({ from: accounts[0] }, (error, transactionHash) => {
+              console.log('error', error, 'transactionHash', transactionHash);
+              // this.setState({ transactionHash });
+               storehash.methods.getLoanPools().call({ from: accounts[0] }, (error, loanPools) => {
+                 console.log('error', error, loanPools, 'loanPools');
+                 // this.setState({ loanPools });
+               });
+             })
          }
       });
 
-      //NOTE: HEYYYYY
-      storehash.methods.addLoanPool(
-        this.state.ipfsHash,
-        accounts[0],
-        wacValue,
-        wartValue,
-        sumOutstanding
-      ).send({ from: accounts[0] }, (error, transactionHash) => {
-         console.log('error', error, 'transactionHash', transactionHash);
-         this.setState({ transactionHash });
-          storehash.methods.getLoanPools().call({ from: accounts[0] }, (error, loanPools) => {
-            console.log('error', error, loanPools, 'loanPools');
-            this.setState({ loanPools });
-          });
-        })
+
     })
   }
 

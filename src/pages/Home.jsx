@@ -254,7 +254,7 @@ class HomeView extends Component {
                 <MDBTableBody>
                   <tr>
                     <td>{hash}</td>
-                    <td>{pool.postDate}</td>
+                    <td>11/3/2019</td>
                     <td>{owner}</td>
                     <td>Auto</td>
                     <td>{fixString}</td>
