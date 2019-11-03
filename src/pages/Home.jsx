@@ -273,8 +273,8 @@ class HomeView extends Component {
       })
     )
     let info = (<div></div>)
-    if (selectedOfferId > -1) {
-      var fixVal = pools[selectedOfferId].totalAmount
+    if (true) {
+      var fixVal = pools[0].totalAmount
       var fixString = parseFloat(fixVal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
       info = (
         <div>
