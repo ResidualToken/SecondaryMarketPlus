@@ -1,0 +1,349 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Futura;
+  background-color: #1c2a48;
+}
+
+.form-btn {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+.StripeElement {
+  min-width: 360px;
+  max-width: 640px;
+  background-color: white;
+  height: 40px;
+  padding: 10px 12px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 3px 0 #e6ebf1;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+.StripeElement--focus {
+  box-shadow: 0 1px 3px 0 #cfd7df;
+}
+
+.StripeElement--invalid {
+  border-color: #fa755a;
+}
+
+.StripeElement--webkit-autofill {
+  background-color: #fefde5 !important;
+}
+
+/* .outer {
+  display: table;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.middle {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.inner {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  padding: 20px;
+}
+*/
+
+
+  -webkit-transition: color 0.6s, background-color 0.3s;
+  -moz-transition: color 0.6s, background-color 0.3s;
+  -ms-transition: color 0.6s, background-color 0.3s;
+  transition: color 0.6s, background-color 0.3s;
+
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      margin: 0;
+  }
+
+  .repeated-item.ng-enter, .repeated-item.ng-move {
+    transition: all 0.5s linear;
+    opacity: 0;
+  }
+
+  .detail-form {
+    background-color: #FFF;
+    border-radius: 10px;
+
+  }
+
+  #detail {
+    background-color: #FFF;
+  }
+
+  .content-item-badge {
+    display: inline;
+  }
+
+  .badge-small {
+    width: 36px;
+    height: 36px;
+    margin-right: 10px;
+    margin-left: 10px;
+    top: 8px;
+    left: -24px;
+    display: inline-block;
+    position: absolute;
+    background-color: #FFF;
+  }
+
+
+  ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+      color:    #909;
+  }
+  :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+     color:    #909;
+     opacity:  1;
+  }
+  ::-moz-placeholder { /* Mozilla Firefox 19+ */
+     color:    #909;
+     opacity:  1;
+  }
+  :-ms-input-placeholder { /* Internet Explorer 10-11 */
+     color:    #909;
+  }
+
+  #bid_history {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: hidden;
+    height: 350px;
+  }
+
+  #bid_history > li {
+      color: black;
+      padding: 5px;
+  }
+
+  #bid_history > li:nth-child(odd) {
+      background-color: #FFF;
+  }
+
+  #bid_history > li:nth-child(even) {
+      background-color: #DEF;
+  }
+
+  #bid_history > li:first-child {
+      background-color: #162055;
+      color: white;
+      font-weight: bold;
+  }
+
+  .right {
+    float: right;
+  }
+
+  .small {
+    float: left;
+    font-size: 11px;
+  }
+
+  #detail-container {
+    padding-left: 30px;
+    padding-right: 30px;
+    background-color: white;
+  }
+
+  .badge {
+    display: inline;
+  }
+
+  #charity {
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-bottom: 30px;
+  }
+
+  #charity h1 {
+    text-align: center;
+  }
+
+  #charity h4 {
+    padding-left: 100px;
+    padding-right: 100px;
+    font-style: italic;
+  }
+
+  #charity .container {
+    border-top: 1px solid @primary-color;
+  }
+
+  .image-main {
+
+  }
+
+  .details-item {
+    padding: 5px;
+    background: #FFF;
+    border-radius: 15px;
+    border: 1px solid #CCC;
+    box-shadow: 0px 1px 1px #CCC;
+    max-width: 250px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .details-item-top {
+      text-align: center;
+  }
+
+  /* .details-item-top img {
+
+  } */
+  .details-item-top h4 {
+    color: @primary-color;
+    text-align: center;
+    font-size: 14px;
+    text-shadow: none;
+  }
+
+
+  .top {
+    margin-top: 50px;
+    color: #F00;
+    font-size: 24px;
+  }
+
+  .details-item-bottom {
+      text-align: center;
+  }
+
+  .details-item-bottom button {
+      width: 80%;
+      margin: 0 auto;
+      color: white;
+      text-shadow: 0 1px 2px #693100;
+  }
+
+  .img-center {
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .autobid-container {
+
+  }
+
+  .autobid-container h4 {
+    border-bottom: 1px solid @primary-color;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  @media only screen and (max-width: 768px) {
+    #detail .timer {
+      margin-bottom: 20px;
+      font-size: 20px;
+      text-overflow: ellipsis;
+      word-wrap: break-word;
+      overflow: hidden;
+      max-height: 3.6em;
+      line-height: 1.8em;
+    }
+  }
+
+  @media only screen and (min-width: 767px) and (max-width: 1200px) {
+    #detail .timer {
+      margin-bottom: 20px;
+      font-size: 24px;
+      text-overflow: ellipsis;
+      word-wrap: break-word;
+      overflow: hidden;
+      max-height: 3.6em;
+      line-height: 1.8em;
+    }
+  }
+
+  @media only screen and (min-width: 1200px) {
+    #detail .timer {
+      margin-bottom: 20px;
+      font-size: 30px;
+      text-overflow: ellipsis;
+      word-wrap: break-word;
+      overflow: hidden;
+      max-height: 3.6em;
+      line-height: 1.8em;
+    }
+  }
+
+.navbar {
+  color: #121D59;
+}
+
+.navbar-space {
+  margin-top: 70px;
+}
+
+.breadcrumb {
+  padding: 8px 15px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border-radius: 0;
+}
+.breadcrumb > li + li:before {
+  content: ">\00a0";
+  color: #cccccc;
+}
+.breadcrumb > .active {
+  color: #999999;
+}
+@media (max-width: 991px) {
+  .breadcrumb {
+    padding: 8px 0;
+    text-align: center;
+  }
+}
+
+.btn {
+  color: black;
+}
+
+.btn-success {
+  color: black;
+}
+
+.ua-facebook-login-button {
+    padding: 15px 28px 15px 28px;
+    background-color: rgb(68,78,186);
+    color: white;
+    border-radius: 5px;
+    text-transform: uppercase;
+    box-shadow: 0px 1px 3px #ccc;
+    font-size: 15px;
+}
+
+.r-footer {
+  background-color: #2e3951;
+}
+
+.r-home {
+  background-color: white;
+}
+
+.r-modal-results {
+  color: black;
+}
